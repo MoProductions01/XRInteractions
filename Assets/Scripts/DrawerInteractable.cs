@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -10,6 +11,7 @@ public class DrawerInteractable : XRGrabInteractable
 {
     [SerializeField] Transform DrawerTransform;
     [SerializeField] XRSocketInteractor KeySocket;
+    [SerializeField] GameObject KeyIndicatorLight;
     [SerializeField] bool IsLocked;
 
     private Transform ParentTransform;
@@ -19,6 +21,8 @@ public class DrawerInteractable : XRGrabInteractable
     private Vector3 LimitPosition;
     [SerializeField] float DrawerLimitZ = .8f;
     [SerializeField] private Vector3 LimitDistance = new Vector3(.02f, .02f, 0f);
+
+    [SerializeField] private TMP_Text DebugText;
     
     void Start()
     {
@@ -37,6 +41,8 @@ public class DrawerInteractable : XRGrabInteractable
         {
             Debug.LogError("ERROR: null DrawerTransform");
         }
+
+         _Mask = "Grab";
     }
 
     private void OnDrawerLocked(SelectExitEventArgs arg0)
@@ -48,6 +54,11 @@ public class DrawerInteractable : XRGrabInteractable
     private void OnDrawerUnlocked(SelectEnterEventArgs arg0)
     {
         IsLocked = false;
+        if(KeyIndicatorLight != null)
+        {
+            KeyIndicatorLight.gameObject.SetActive(false);
+        }
+
         Debug.Log("****Drawer Unlocked****");
     }
 
@@ -91,6 +102,11 @@ public class DrawerInteractable : XRGrabInteractable
 
             CheckLimits();
         }
+
+
+        DebugText.text = "IsLocked: " + IsLocked + "\n";
+        DebugText.text += "Mask: " + _Mask;
+
     }
 
     private void CheckLimits()
@@ -116,9 +132,11 @@ public class DrawerInteractable : XRGrabInteractable
             ChangeLayerMask(DefaultLayer);
         }  
     }
-
+    string _Mask;
     private void ChangeLayerMask(string mask)
     {
+        Debug.Log("ChangeLayerMask(): " + mask);
+        _Mask = mask;
         interactionLayers = InteractionLayerMask.GetMask(mask);
     }
 }

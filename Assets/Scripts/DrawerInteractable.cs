@@ -8,13 +8,16 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class DrawerInteractable : XRGrabInteractable
 {
-
+    [SerializeField] Transform DrawerTransform;
     [SerializeField] XRSocketInteractor KeySocket;
     [SerializeField] bool IsLocked;
 
     private Transform ParentTransform;
     private const string DefaultLayer = "Default";
     private const string GrabLayer = "Grab";
+    private bool IsGrabbed;
+    private Vector3 LimitPosition;
+    [SerializeField] private Vector3 LimitDistance = new Vector3(.02f, .02f, 0f);
     
     void Start()
     {
@@ -25,6 +28,14 @@ public class DrawerInteractable : XRGrabInteractable
         }
 
         ParentTransform = transform.parent.transform;
+        if(DrawerTransform != null)
+        {
+            LimitPosition = DrawerTransform.localPosition;
+        }
+        else
+        {
+            Debug.LogError("ERROR: null DrawerTransform");
+        }
     }
 
     private void OnDrawerLocked(SelectExitEventArgs arg0)
@@ -42,30 +53,58 @@ public class DrawerInteractable : XRGrabInteractable
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
         base.OnSelectEntered(args);
-        string s = "OnSelectEntered(): ";
+        //string s = "OnSelectEntered(): ";
         if(IsLocked == false)
         {
-            s += "IsLocked = false";
+            //s += "IsLocked = false";
+            // grab the object
             transform.SetParent(ParentTransform);
+            IsGrabbed = true;
         }
         else
         {
-            s += "IsLocked = true";
-            interactionLayers = InteractionLayerMask.GetMask(DefaultLayer);
+          //  s += "IsLocked = true";
+            //interactionLayers = InteractionLayerMask.GetMask(DefaultLayer);
+            ChangeLayerMask(DefaultLayer);
         }
-        Debug.Log(s);
+       // Debug.Log(s);
     }
 
     protected override void OnSelectExited(SelectExitEventArgs args)
     {
         base.OnSelectExited(args);
-        Debug.Log("OnSelectExited()");
-        interactionLayers = InteractionLayerMask.GetMask(GrabLayer);
+        //Debug.Log("OnSelectExited()");
+        ChangeLayerMask(GrabLayer);
+        //interactionLayers = InteractionLayerMask.GetMask(GrabLayer);
+        IsGrabbed = false;
+        transform.localPosition = DrawerTransform.localPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(IsGrabbed == true && DrawerTransform != null)
+        {
+            DrawerTransform.localPosition = new Vector3(DrawerTransform.localPosition.x,
+               DrawerTransform.localPosition.y, transform.localPosition.z);
+
+            CheckLimits();
+        }
+    }
+
+    private void CheckLimits()
+    {
+        if(transform.localPosition.x >= LimitPosition.x + LimitDistance.x ||
+            transform.localPosition.x <= LimitPosition.x - LimitDistance.x ||
+            transform.localPosition.y >= LimitPosition.y + LimitDistance.y ||
+            transform.localPosition.y <= LimitPosition.y - LimitDistance.y)
+        {
+            ChangeLayerMask(DefaultLayer);
+        }
+    }
+
+    private void ChangeLayerMask(string mask)
+    {
+        interactionLayers = InteractionLayerMask.GetMask(mask);
     }
 }

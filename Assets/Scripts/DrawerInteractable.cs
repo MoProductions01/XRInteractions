@@ -48,7 +48,7 @@ public class DrawerInteractable : XRGrabInteractable
     private void OnDrawerLocked(SelectExitEventArgs arg0)
     {
          IsLocked = true;
-        Debug.Log("****Drawer Locked****");
+         Debug.Log("****Drawer Locked****");
     }
 
     private void OnDrawerUnlocked(SelectEnterEventArgs arg0)

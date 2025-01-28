@@ -21,7 +21,7 @@ public class DrawerInteractable : XRGrabInteractable
     [SerializeField] float DrawerLimitZ = .8f;
     [SerializeField] private Vector3 LimitDistance = new Vector3(.02f, .02f, 0f);
 
-    [SerializeField] private TMP_Text DebugText;
+    //[SerializeField] private TMP_Text DebugText;
     
     void Start()
     {
@@ -99,8 +99,8 @@ public class DrawerInteractable : XRGrabInteractable
         }
 
 
-        DebugText.text = "IsLocked: " + IsLocked + "\n";
-        DebugText.text += "Mask: " + _Mask;
+      //  DebugText.text = "IsLocked: " + IsLocked + "\n";
+      //  DebugText.text += "Mask: " + _Mask;
 
     }
 

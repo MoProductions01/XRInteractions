@@ -9,19 +9,21 @@ public class XrButtonInteractable : XRSimpleInteractable
      // motodo - redo all the variables and clean up the stupid multi refereces for colors and use an emum
     [SerializeField] GameObject KeyIndicatorLight;
     [SerializeField] Image buttonImage;
-    [SerializeField] Color[] buttonColors = new Color[4];
-    private Color normalColor;
-    private Color highlightedColor;
-    private Color pressedColor;
-    private Color selectedColor;
+
+    //[SerializeField] Color[] buttonColors = new Color[4];
+    [SerializeField] private Color normalColor;
+    [SerializeField] private Color highlightedColor;
+    [SerializeField] private Color pressedColor;
+    [SerializeField] private Color selectedColor;
+
     private bool isPressed;
     void Start()
     {
-        normalColor = buttonColors[0];
-        highlightedColor = buttonColors[1];
-        pressedColor = buttonColors[2];
-        selectedColor = buttonColors[3];
-        buttonImage.color = normalColor;
+       // normalColor = buttonColors[0];
+       // highlightedColor = buttonColors[1];
+      //  pressedColor = buttonColors[2];
+      //  selectedColor = buttonColors[3];
+        ResetColor();
     }
 
     protected override void OnHoverEntered(HoverEnterEventArgs args)
@@ -52,10 +54,10 @@ public class XrButtonInteractable : XRSimpleInteractable
         base.OnSelectExited(args);
         buttonImage.color = selectedColor;
     }
-    // Update is called once per frame
-    void Update()
+    
+    public void ResetColor()
     {
-        
+        buttonImage.color = normalColor;
     }
 }
 

@@ -10,11 +10,18 @@ public class ComboLock : MonoBehaviour
 {
     [SerializeField] TMP_Text UserInputText;
     [SerializeField] XrButtonInteractable[] ComboButtons;
+    [SerializeField] TMP_Text InfoText;
+    private const string StartString = "Enter 3 Digit Combo";
+    private const string ResetString = "Enter 3 Digits To Reset Combo";
     [SerializeField] Image LockedPanel;
     [SerializeField] Color UnlockedColor;
+    [SerializeField] Color LockedColor;
     [SerializeField] TMP_Text LockedText;
     private const string UnlockedString = "Unlocked";
+    private const string LockedString = "Locked";
     [SerializeField] bool IsLocked;
+    [SerializeField] bool IsResettable;
+    private bool ShouldResetCombo;
     [SerializeField] int[] ComboValues = new int[3];
     [SerializeField] int[] InputValues;
     private int MaxButtonPresses;
@@ -24,8 +31,8 @@ public class ComboLock : MonoBehaviour
     {
         MaxButtonPresses = ComboValues.Length;
         ResetUserValues();
-       // InputValues = new int[MaxButtonPresses];
-       // UserInputText.text = "";
+        // InputValues = new int[MaxButtonPresses];
+        // UserInputText.text = "";
 
         for (int i = 0; i < ComboButtons.Length; i++)
         {
@@ -54,7 +61,7 @@ public class ComboLock : MonoBehaviour
                 }
             }
             NumButtonPresses++;
-            if(NumButtonPresses == MaxButtonPresses)
+            if (NumButtonPresses == MaxButtonPresses)
             {
                 // check combo
                 CheckCombo();
@@ -64,25 +71,60 @@ public class ComboLock : MonoBehaviour
 
     private void CheckCombo()
     {
+        if (ShouldResetCombo == true)
+        {
+            ShouldResetCombo = false;
+            LockCombo();
+            return;
+        }
         int matches = 0;
 
-        for(int i=0; i<MaxButtonPresses; i++)
+        for (int i = 0; i < MaxButtonPresses; i++)
         {   // motodo don't do it this way look for a not equal value and bail
-            if(InputValues[i] == ComboValues[i])
+            if (InputValues[i] == ComboValues[i])
             {
                 matches++;
             }
         }
-        if(matches == MaxButtonPresses)
+        if (matches == MaxButtonPresses)
         {
-            IsLocked = false;
-            LockedPanel.color = UnlockedColor;
-            LockedText.text = UnlockedString;
+            UnlockCombo();
         }
         else
         {
-             ResetUserValues();
+            ResetUserValues();
         }
+    }
+
+    private void UnlockCombo()
+    {
+        IsLocked = false;
+        LockedPanel.color = UnlockedColor;
+        LockedText.text = UnlockedString;
+        if (IsResettable == true)
+        {
+            ResetCombo();
+        }
+    }
+
+    private void LockCombo()
+    {
+        IsLocked = true;
+        LockedPanel.color = LockedColor;
+        LockedText.text = LockedString;
+        InfoText.text = StartString;
+        for(int i=0; i<MaxButtonPresses; i++)
+        {
+            ComboValues[i] = InputValues[i];
+        }
+        ResetUserValues();
+    }
+
+    private void ResetCombo()
+    {
+        InfoText.text = ResetString;
+        ResetUserValues();
+        ShouldResetCombo = true;
     }
 
     private void ResetUserValues()

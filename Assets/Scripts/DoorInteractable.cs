@@ -12,11 +12,13 @@ public class DoorInteractable : SimpleHingeInteractable
     private Transform StartRotation; // monote - rename to StartTransform
     private float StartAngleX;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         StartRotation = transform;
         StartAngleX = StartRotation.localEulerAngles.x;
-        if(StartAngleX >= 180)
+        if (StartAngleX >= 180)
         {
             StartAngleX -= 360;
         }
@@ -55,12 +57,12 @@ public class DoorInteractable : SimpleHingeInteractable
                 transform.localEulerAngles.y, DoorObject.localEulerAngles.z);
         }
 
-        if(isSelected == true)
+        if (isSelected == true)
         {
             CheckLimits();
         }
     }
-    
+
     private void CheckLimits()
     {
         float localAngleX = transform.localEulerAngles.x;
@@ -68,14 +70,14 @@ public class DoorInteractable : SimpleHingeInteractable
         {
             localAngleX -= 360f;
         }
-        if(localAngleX >= StartAngleX + RotationLimits.x ||
+        if (localAngleX >= StartAngleX + RotationLimits.x ||
            localAngleX <= StartAngleX - RotationLimits.x)
         {
             ReleaseHinge();
-            transform.localEulerAngles = new Vector3(StartAngleX, 
+            transform.localEulerAngles = new Vector3(StartAngleX,
                 transform.localEulerAngles.y, transform.localEulerAngles.z);
         }
-    } //motodo - look into interfaces for CheckLimits()
+    } //motodo - look into interfaces for CheckLimits(). Also check y/z angle?
 
     // string s = "Pre localAngleX: " + localAngleX + ", ";
     // s += "Post localAngleX: " + localAngleX;

@@ -1,19 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 public class SimpleHingeInteractable : XRSimpleInteractable
 {
+    [SerializeField] Vector3 PositionLimits;
     private Transform GrabHand;
+    private Collider HingeCollider;
+    private Vector3 HingePosition;
     [SerializeField] bool IsLocked;
     private const string Default_Layer = "Default"; // monote - add "_" to const
     private const string Grab_Layer = "Grab"; // monote - see if we can share this with DrawerInteractable
 
-    void Start()
+    protected virtual void Start()
     {
-
+        HingeCollider = GetComponent<Collider>();
     }
 
     public void UnlockHinge()
@@ -32,7 +38,7 @@ public class SimpleHingeInteractable : XRSimpleInteractable
     {
         if (GrabHand != null)
         {
-            transform.LookAt(GrabHand.transform);
+            TrackHand();
             //  Debug.Log("looking at grab hand");
         }
     }
@@ -45,7 +51,6 @@ public class SimpleHingeInteractable : XRSimpleInteractable
             GrabHand = args.interactorObject.transform;
             // Debug.Log("GrabHand: " + GrabHand.name);
         }
-
     }
 
     protected override void OnSelectExited(SelectExitEventArgs args)
@@ -56,6 +61,30 @@ public class SimpleHingeInteractable : XRSimpleInteractable
         //   Debug.Log("G
     }
 
+    private void TrackHand()
+    {   // motodo maybe update the >=,<= to a more Dist() thing
+        transform.LookAt(GrabHand.transform);
+        HingePosition = HingeCollider.bounds.center;
+        if (GrabHand.position.x >= HingePosition.x + PositionLimits.x ||
+            GrabHand.position.x <= HingePosition.x - PositionLimits.x)
+        {
+            ReleaseHinge();
+            Debug.Log("TrackHand() release hinge X");
+        }
+        else if (GrabHand.position.y >= HingePosition.y + PositionLimits.y ||
+            GrabHand.position.y <= HingePosition.y - PositionLimits.y)
+        {
+            ReleaseHinge();
+            Debug.Log("TrackHand() release hinge Y");
+        }
+        else if (GrabHand.position.z >= HingePosition.z + PositionLimits.z ||
+            GrabHand.position.z <= HingePosition.z - PositionLimits.z)
+        {
+            ReleaseHinge();
+            Debug.Log("TrackHand() release hinge Z");
+        }
+    }
+
     public void ReleaseHinge()
     {
         ChangeLayerMask(Default_Layer);
@@ -63,7 +92,7 @@ public class SimpleHingeInteractable : XRSimpleInteractable
 
     private void ChangeLayerMask(string mask)
     {
-        Debug.Log("SimpleHingeInteractable.ChangeLayerMask(): " + mask);
+        // Debug.Log("SimpleHingeInteractable.ChangeLayerMask(): " + mask);
         interactionLayers = InteractionLayerMask.GetMask(mask);
     }
 

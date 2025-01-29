@@ -49,6 +49,12 @@ public abstract class SimpleHingeInteractable : XRSimpleInteractable
         {
             base.OnSelectEntered(args);
             GrabHand = args.interactorObject.transform;
+            float localAngleX = GrabHand.transform.localEulerAngles.x;
+            if (localAngleX >= 180f)
+            {
+                localAngleX -= 360f;
+            }
+            Debug.Log("Grabbed with: " + GrabHand.gameObject.name + ", localAngleX: " + localAngleX.ToString("F3"));
             // Debug.Log("GrabHand: " + GrabHand.name);
         }
     }

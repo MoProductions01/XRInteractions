@@ -55,17 +55,46 @@ public class DoorInteractable : SimpleHingeInteractable
         LockHinge();
     }
 
+#if false
+    bool HasPrinted = false;
     // Update is called once per frame
     protected override void Update()
     {
         base.Update();
         if (DoorObject != null)
         {
+            string s = "before: " + DoorObject.localEulerAngles.ToString("F3") + ", ";
             DoorObject.localEulerAngles = new Vector3(DoorObject.localEulerAngles.x,
                 transform.localEulerAngles.y, DoorObject.localEulerAngles.z);
+            s += "after: " + DoorObject.localEulerAngles.ToString("F3") + ", ";
+            Debug.Log("s: " + s);
+           /* if(HasPrinted == false) 
+            {
+                HasPrinted = true;
+                Debug.Log("s: " + s);
+            }*/
         }
 
         if (isSelected == true)
+        {
+            CheckLimits();
+        }
+    }
+    #endif
+
+    protected override void Update()
+    {
+        base.Update();
+        if (DoorObject != null)
+        {
+            DoorObject.localEulerAngles = new Vector3(
+                DoorObject.localEulerAngles.x,
+                transform.localEulerAngles.y,
+                DoorObject.localEulerAngles.z
+            );
+        }
+
+        if (isSelected)
         {
             CheckLimits();
         }

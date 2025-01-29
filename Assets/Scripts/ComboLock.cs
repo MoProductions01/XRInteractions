@@ -9,18 +9,22 @@ using UnityEngine.Events;
 
 public class ComboLock : MonoBehaviour
 {
-    
+    public UnityAction UnlockAction;  
+    public UnityAction LockAction;  
+    private void OnUnlocked() => UnlockAction?.Invoke();  
+    private void OnLocked() => LockAction?.Invoke();
+
     [SerializeField] TMP_Text UserInputText;
     [SerializeField] XrButtonInteractable[] ComboButtons;
     [SerializeField] TMP_Text InfoText;
-    private const string StartString = "Enter 3 Digit Combo";
-    private const string ResetString = "Enter 3 Digits To Reset Combo";
+    private const string Start_String = "Enter 3 Digit Combo";
+    private const string Reset_String = "Enter 3 Digits To Reset Combo";
     [SerializeField] Image LockedPanel;
     [SerializeField] Color UnlockedColor;
     [SerializeField] Color LockedColor;
     [SerializeField] TMP_Text LockedText;
-    private const string UnlockedString = "Unlocked";
-    private const string LockedString = "Locked";
+    private const string Unlocked_String = "Unlocked";
+    private const string Locked_String = "Locked";
     [SerializeField] bool IsLocked;
     [SerializeField] bool IsResettable;
     private bool ShouldResetCombo;
@@ -98,18 +102,14 @@ public class ComboLock : MonoBehaviour
         }
     }
 
-    public UnityAction UnlockAction;  
-    public UnityAction LockAction;  
-    private void OnUnlocked() => UnlockAction?.Invoke();  
-    private void OnLocked() => LockAction?.Invoke();
-
+    
     private void UnlockCombo()
     {
        // Debug.Log("ComboLock.UnlockCombo()");
         IsLocked = false;
         OnUnlocked();
         LockedPanel.color = UnlockedColor;
-        LockedText.text = UnlockedString;
+        LockedText.text = Unlocked_String;
         if (IsResettable == true)
         {
             ResetCombo();
@@ -122,8 +122,8 @@ public class ComboLock : MonoBehaviour
         IsLocked = true;
         OnLocked();        
         LockedPanel.color = LockedColor;
-        LockedText.text = LockedString;
-        InfoText.text = StartString;
+        LockedText.text = Locked_String;
+        InfoText.text = Start_String;
         for(int i=0; i<MaxButtonPresses; i++)
         {
             ComboValues[i] = InputValues[i];
@@ -133,7 +133,7 @@ public class ComboLock : MonoBehaviour
 
     private void ResetCombo()
     {
-        InfoText.text = ResetString;
+        InfoText.text = Reset_String;
         ResetUserValues();
         ShouldResetCombo = true;
     }

@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class DoorInteractable : SimpleHingeInteractable
 {
+    public UnityEvent OnOpen;
+
     [SerializeField] ComboLock ComboLock;
     [SerializeField] Transform DoorObject;
     [SerializeField] Vector3 RotationLimits;
@@ -26,11 +25,12 @@ public class DoorInteractable : SimpleHingeInteractable
         base.Start();
 
         StartRotation = transform.localEulerAngles;
-        StartAngleX = StartRotation.x;
-        if (StartAngleX >= 180)
+        StartAngleX = GetAngle(StartRotation.x);
+        //StartAngleX = StartRotation.x;
+        /*if (StartAngleX >= 180)
         {
             StartAngleX -= 360;
-        }
+        }*/
 
         if (ComboLock != null)
         {
@@ -105,11 +105,12 @@ public class DoorInteractable : SimpleHingeInteractable
     {   // if we're here then the interactable is selected and moving the hinge
         IsClosed = false;
         IsOpen = false;
-        float localAngleX = transform.localEulerAngles.x;
-        if (localAngleX >= 180f)
+        //float localAngleX = transform.localEulerAngles.x;
+        float localAngleX = GetAngle(transform.localEulerAngles.x);
+      /*  if (localAngleX >= 180f)
         {
             localAngleX -= 360f;
-        }
+        }*/
         if (localAngleX >= StartAngleX + RotationLimits.x ||
            localAngleX <= StartAngleX - RotationLimits.x)
         {
@@ -117,6 +118,15 @@ public class DoorInteractable : SimpleHingeInteractable
 
         }
     } //motodo - look into interfaces for CheckLimits(). Also check y/z angle?
+
+    private float GetAngle(float angle)
+    {
+        if (angle >= 180f)
+        {
+            angle -= 360f;
+        }
+        return angle;
+    }
 
     protected override void ResetHinge()
     {
@@ -130,6 +140,7 @@ public class DoorInteractable : SimpleHingeInteractable
         {
             Debug.Log("Reset transform to EndRotation");
             transform.localEulerAngles = EndRotation;
+            OnOpen?.Invoke();
         }
         else
         {

@@ -9,15 +9,23 @@ public class DoorInteractable : SimpleHingeInteractable
     [SerializeField] ComboLock ComboLock;
     [SerializeField] Transform DoorObject;
     [SerializeField] Vector3 RotationLimits;
-    private Transform StartRotation; // monote - rename to StartTransform
-    private float StartAngleX;
+
+    [SerializeField] Collider ClosedCollider;
+    [SerializeField] private bool IsClosed;
+    [SerializeField] private Vector3 StartRotation;
+    [SerializeField]private float StartAngleX;
+
+    [SerializeField] Collider OpenCollider;
+    [SerializeField] private bool IsOpen;
+    [SerializeField] private Vector3 EndRotation;
+    [SerializeField] private float EndAngleX;
 
     protected override void Start()
     {
         base.Start();
 
-        StartRotation = transform;
-        StartAngleX = StartRotation.localEulerAngles.x;
+        StartRotation = transform.localEulerAngles;
+        StartAngleX = StartRotation.x;
         if (StartAngleX >= 180)
         {
             StartAngleX -= 360;
@@ -64,7 +72,9 @@ public class DoorInteractable : SimpleHingeInteractable
     }
 
     private void CheckLimits()
-    {
+    {   // if we're here then the interactable is selected and moving the hinge
+        IsClosed = false;
+        IsOpen = false;
         float localAngleX = transform.localEulerAngles.x;
         if (localAngleX >= 180f)
         {
@@ -74,10 +84,47 @@ public class DoorInteractable : SimpleHingeInteractable
            localAngleX <= StartAngleX - RotationLimits.x)
         {
             ReleaseHinge();
-            transform.localEulerAngles = new Vector3(StartAngleX,
-                transform.localEulerAngles.y, transform.localEulerAngles.z);
+
         }
     } //motodo - look into interfaces for CheckLimits(). Also check y/z angle?
+
+    protected override void ResetHinge()
+    {
+        Debug.Log("ResetHinge name: " + this.name);        
+
+        if (IsClosed == true)
+        {
+            transform.localEulerAngles = StartRotation;
+        }
+        else if(IsOpen == true)
+        {
+            Debug.Log("Reset transform to EndRotation");
+            transform.localEulerAngles = EndRotation;
+        }
+        else
+        {
+            transform.localEulerAngles = new Vector3(StartAngleX,
+                    transform.localEulerAngles.y, transform.localEulerAngles.z);
+        }
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("OnTriggerEnter name: " + this.name);
+        if (other == ClosedCollider)
+        {
+            IsClosed = true;
+            Debug.Log("Set IsClosed to true name: " + this.name);
+            ReleaseHinge(); // this will eventually call ResetHinge()
+        }
+        else if(other == OpenCollider)
+        {
+            IsOpen = true;
+            Debug.Log("Set IsOpen to true name: " + this.name);
+            ReleaseHinge(); // this will eventually call ResetHinge()
+        }
+    }
 
     // string s = "Pre localAngleX: " + localAngleX + ", ";
     // s += "Post localAngleX: " + localAngleX;

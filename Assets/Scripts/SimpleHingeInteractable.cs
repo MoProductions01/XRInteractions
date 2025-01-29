@@ -7,7 +7,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
-public class SimpleHingeInteractable : XRSimpleInteractable
+public abstract class SimpleHingeInteractable : XRSimpleInteractable
 {
     [SerializeField] Vector3 PositionLimits;
     private Transform GrabHand;
@@ -55,9 +55,11 @@ public class SimpleHingeInteractable : XRSimpleInteractable
 
     protected override void OnSelectExited(SelectExitEventArgs args)
     {
+        Debug.Log("SHI.OnSelectExited name: " + this.name);
         base.OnSelectExited(args);
         GrabHand = null;
         ChangeLayerMask(Grab_Layer);
+        ResetHinge();
         //   Debug.Log("G
     }
 
@@ -69,26 +71,34 @@ public class SimpleHingeInteractable : XRSimpleInteractable
             GrabHand.position.x <= HingePosition.x - PositionLimits.x)
         {
             ReleaseHinge();
-            Debug.Log("TrackHand() release hinge X");
+           // Debug.Log("TrackHand() release hinge X");
         }
         else if (GrabHand.position.y >= HingePosition.y + PositionLimits.y ||
             GrabHand.position.y <= HingePosition.y - PositionLimits.y)
         {
             ReleaseHinge();
-            Debug.Log("TrackHand() release hinge Y");
+            //Debug.Log("TrackHand() release hinge Y");
         }
         else if (GrabHand.position.z >= HingePosition.z + PositionLimits.z ||
             GrabHand.position.z <= HingePosition.z - PositionLimits.z)
         {
             ReleaseHinge();
-            Debug.Log("TrackHand() release hinge Z");
+            //Debug.Log("TrackHand() release hinge Z");
         }
     }
 
     public void ReleaseHinge()
     {
-        ChangeLayerMask(Default_Layer);
+        ChangeLayerMask(Default_Layer); // this gives us OnSelectExited
+        if(GrabHand == null)
+        {
+            Debug.Log("Fail safe activated");
+            ResetHinge();
+            ChangeLayerMask(Grab_Layer);
+        }
     }
+
+    protected abstract void ResetHinge();
 
     private void ChangeLayerMask(string mask)
     {

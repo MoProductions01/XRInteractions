@@ -14,8 +14,8 @@ public class DrawerInteractable : XRGrabInteractable
     [SerializeField] bool IsLocked;
 
     private Transform ParentTransform;
-    private const string DefaultLayer = "Default";
-    private const string GrabLayer = "Grab";
+    private const string Default_Layer = "Default"; // monote - add "_" to const
+    private const string Grab_Layer = "Grab"; 
     private bool IsGrabbed;
     private Vector3 LimitPosition;
     [SerializeField] float DrawerLimitZ = .8f;
@@ -41,7 +41,7 @@ public class DrawerInteractable : XRGrabInteractable
             Debug.LogError("ERROR: null DrawerTransform");
         }
 
-         _Mask = "Grab";
+         //_Mask = "Grab";
     }
 
     private void OnDrawerLocked(SelectExitEventArgs arg0)
@@ -72,7 +72,7 @@ public class DrawerInteractable : XRGrabInteractable
         {
           //  s += "IsLocked = true";
             //interactionLayers = InteractionLayerMask.GetMask(DefaultLayer);
-            ChangeLayerMask(DefaultLayer);
+            ChangeLayerMask(Default_Layer);
         }
        // Debug.Log(s);
     }
@@ -81,7 +81,7 @@ public class DrawerInteractable : XRGrabInteractable
     {
         base.OnSelectExited(args);
         //Debug.Log("OnSelectExited()");
-        ChangeLayerMask(GrabLayer);
+        ChangeLayerMask(Grab_Layer);
         //interactionLayers = InteractionLayerMask.GetMask(GrabLayer);
         IsGrabbed = false;
         transform.localPosition = DrawerTransform.localPosition;
@@ -111,27 +111,25 @@ public class DrawerInteractable : XRGrabInteractable
             transform.localPosition.y >= LimitPosition.y + LimitDistance.y ||
             transform.localPosition.y <= LimitPosition.y - LimitDistance.y)
         {
-            ChangeLayerMask(DefaultLayer);
+            ChangeLayerMask(Default_Layer);
         }
         else if(DrawerTransform.localPosition.z <= LimitPosition.z - LimitDistance.z)
         {
             IsGrabbed = false;
             DrawerTransform.localPosition = LimitPosition;
-            ChangeLayerMask(DefaultLayer);
+            ChangeLayerMask(Default_Layer);
         }     
         else if(DrawerTransform.localPosition.z >= DrawerLimitZ + LimitDistance.z)
         {
             IsGrabbed = false;
             DrawerTransform.localPosition = new Vector3(DrawerTransform.localPosition.x,
                 DrawerTransform.localPosition.y, DrawerLimitZ - .01f);
-            ChangeLayerMask(DefaultLayer);
+            ChangeLayerMask(Default_Layer);
         }  
     }
-    string _Mask;
+    
     private void ChangeLayerMask(string mask)
-    {
-        Debug.Log("ChangeLayerMask(): " + mask);
-        _Mask = mask;
+    {    
         interactionLayers = InteractionLayerMask.GetMask(mask);
     }
 }

@@ -49908,10 +49908,9 @@ MonoBehaviour:
   m_OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
-  IsLocked: 0
+  IsLocked: 1
   ComboLock: {fileID: 1689211412}
   DoorObject: {fileID: 4293244892648783988}
-  RotationLimits: {x: 15, y: 0, z: 0}
 --- !u!135 &7232470888887302568
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -51359,10 +51358,9 @@ MonoBehaviour:
   m_OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
-  IsLocked: 0
+  IsLocked: 1
   ComboLock: {fileID: 1689211412}
   DoorObject: {fileID: 6097707997609113017}
-  RotationLimits: {x: 15, y: 0, z: 0}
 --- !u!135 &8471264458420767586
 SphereCollider:
   m_ObjectHideFlags: 0

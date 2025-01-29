@@ -11,11 +11,12 @@ public class DoorInteractable : SimpleHingeInteractable
     [SerializeField] Vector3 RotationLimits;
 
     [SerializeField] Collider ClosedCollider;
+    [SerializeField] Collider OpenCollider;
+
     [SerializeField] private bool IsClosed;
     [SerializeField] private Vector3 StartRotation;
     [SerializeField]private float StartAngleX;
-
-    [SerializeField] Collider OpenCollider;
+    
     [SerializeField] private bool IsOpen;
     [SerializeField] private Vector3 EndRotation;
     [SerializeField] private float EndAngleX;

@@ -8,9 +8,9 @@ using UnityEngine.XR.Interaction.Toolkit;
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
 public abstract class SimpleHingeInteractable : XRSimpleInteractable
-{
+{   // motodo - make sure only the necessary things are serialized by the end
     [SerializeField] Vector3 PositionLimits;
-    private Transform GrabHand;
+    [SerializeField] private Transform GrabHand;
     private Collider HingeCollider;
     private Vector3 HingePosition;
     [SerializeField] bool IsLocked;
@@ -49,12 +49,12 @@ public abstract class SimpleHingeInteractable : XRSimpleInteractable
         {
             base.OnSelectEntered(args);
             GrabHand = args.interactorObject.transform;
-            float localAngleX = GrabHand.transform.localEulerAngles.x;
-            if (localAngleX >= 180f)
+            float localAngleY = GrabHand.transform.localEulerAngles.y;
+            if (localAngleY >= 180f)
             {
-                localAngleX -= 360f;
-            }
-            Debug.Log("Grabbed with: " + GrabHand.gameObject.name + ", localAngleX: " + localAngleX.ToString("F3"));
+                localAngleY -= 360f;
+            } // motodo - there's an issue with the door popping when grabbed due ot it's rotation adjusting with the grab item
+            Debug.Log("Grabbed with: " + GrabHand.gameObject.name + ", localAngleY: " + localAngleY.ToString("F3"));
             // Debug.Log("GrabHand: " + GrabHand.name);
         }
     }
@@ -71,7 +71,8 @@ public abstract class SimpleHingeInteractable : XRSimpleInteractable
 
     private void TrackHand()
     {   // motodo maybe update the >=,<= to a more Dist() thing
-        transform.LookAt(GrabHand.transform);
+        //transform.LookAt(GrabHand.transform);
+        transform.LookAt(GrabHand, transform.forward);
         HingePosition = HingeCollider.bounds.center;
         if (GrabHand.position.x >= HingePosition.x + PositionLimits.x ||
             GrabHand.position.x <= HingePosition.x - PositionLimits.x)
